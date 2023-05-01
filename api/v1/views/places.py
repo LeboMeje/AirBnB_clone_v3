@@ -72,16 +72,16 @@ def put_place(place_id):
     place = storage.get("Place", place_id)
     if not place:
         abort(404)
-    
+
     body_request = request.get_json()
     if not body_request:
         abort(400, "Not a JSON")
-    
+
     for k, v in body_request.items():
         if k not in ['id', 'user_id', 'city_at',
                      'created_at', 'updated_at']:
             setattr(place, k, v)
-    
+
     storage.save()
     return make_response(jsonify(place.to_dict()), 200)
 
@@ -106,22 +106,22 @@ def places_search():
         return jsonify([place.to_dict() for place in places.values()])
 
     places = []
-    
+
     if body_r.get('states'):
         states = [storage.get("State", id) for id in body_r.get('states')]
         for state in states:
             for city in state.cities:
                 for place in city.places:
                     places.append(place)
-    
+
     if body_r.get('cities'):
         cities = [storage.get("City", id) for id in body_r.get('cities')]
-    
+
         for city in cities:
             for place in city.places:
                 if place not in places:
                     places.append(place)
-    
+
     if not places:
         places = storage.all(Place)
         places = [place for place in places.values()]
