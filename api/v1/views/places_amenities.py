@@ -87,4 +87,4 @@ def link_amenity_place(place_id, amenity_id):
         place.amenity_ids.append(amenity_id)
 
     storage.save()
-    return make_response(jsonify
+    return make_response(jsonify)
