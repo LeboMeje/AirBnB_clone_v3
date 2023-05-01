@@ -20,10 +20,22 @@ def places_amenities(place_id):
         abort(404)
 
     if getenv('HBNB_TYPE_STORAGE') == 'db':
-        l = [amenity.to_dict() for amenity in place.amenities]
+        try:
+            amenities = place.amenities
+            amenities_list = [amenity.to_dict() for amenity in amenities]
+        except Exception as e:
+            abort(500, description=str(e))
     else:
-        l = [storage.get("Amenity", id).to_dict() for id in place.amenity_ids]
-    return jsonify(l)
+        amenity_ids = place.amenity_ids
+        amenities_dict_list = []
+        for id in amenity_ids:
+            amenity = storage.get("Amenity", id)
+            if amenity is None:
+                continue
+            amenities_dict_list.append(amenity.to_dict())
+        amenities_list = amenities_dict_list
+
+    return jsonify(amenities_list)
 
 
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
@@ -75,4 +87,4 @@ def link_amenity_place(place_id, amenity_id):
         place.amenity_ids.append(amenity_id)
 
     storage.save()
-    return make_response(jsonify(amenity.to_dict()), 201)
+    return make_response(jsonify
