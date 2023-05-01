@@ -5,6 +5,8 @@ from flask import jsonify, abort, make_response, request
 from models import storage
 from models.user import User
 import hashlib
+
+
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
 def users():
     """ Retrieves the list of all User objects """
@@ -20,7 +22,7 @@ def r_user_id(user_id):
     user = storage.get("User", user_id)
     if not user:
         abort(404)
-  
+
     return jsonify(user.to_dict())
 
 
@@ -59,7 +61,7 @@ def put_user(user_id):
     user = storage.get("User", user_id)
     if not user:
         abort(404)
-    
+
     body_request = request.get_json()
     if not body_request:
         abort(400, "Not a JSON")
